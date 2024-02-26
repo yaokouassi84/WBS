@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Liste des Films</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script type="text/javascript">
+    var app = angular.module('myApp', []);
+
+    app.controller('myCtrl', function($scope, $http) {
+        $scope.callGetAllFilmsService = function() {
+            console.log("Appel à la fonction callGetAllFilmsService");
+            $http.get('http://localhost:8085/WebService/rest/Web/getAllFilms')
+                .then(function(response) {
+                    console.log("Données reçues avec succès :", response.data);
+                    $scope.films = response.data; // Assurez-vous que response.data est une liste d'objets Film
+                })
+                .catch(function(error) {
+                    console.error('Erreur lors de l\'appel du service web :', error);
+                    $scope.message = "Une erreur s'est produite lors de l'appel du service web.";
+                });
+        };
+    });
+</script>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <button ng-click="callGetAllFilmsService()">Obtenir tous les films</button>
+    
+    <div ng-if="films && films.length > 0">
+        <h2>Liste des Films</h2>
+        <ul>
+            <li ng-repeat="film in films">
+                <p>{{film.nomFilm}}</p>
+                <p>{{film.auteur}}</p>
+                <p>{{film.dateSortie}}</p>
+                <p>{{film.durée}}</p>
+                <!-- Ajoutez d'autres propriétés de film selon vos besoins -->
+            </li>
+        </ul>
+    </div>
+    <div ng-if="!films || films.length === 0">
+        <p>Aucun film disponible pour le moment.</p>
+    </div>
+</body>
+</html>
+
